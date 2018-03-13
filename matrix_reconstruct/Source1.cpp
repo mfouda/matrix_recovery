@@ -40,12 +40,17 @@ int main()
     std::list<ushort> R_vecs; // remaining
     std::list<ushort> U_vecs; // used
     std::list<ushort> N_vecs; // not-matched
-    std::list<ushort> trials_list; 
+    std::list<ushort> trials_list;
     vector<vector<mat_type>> pool;
+
+    // it will k
+    vector<mat_type> pattern;
+
+
     std::random_device rd;
     unsigned int seed = 1852752597;//rd();//42;
     cout << "SEED: " << seed << endl;
-    size_t mat_size = 100;
+    size_t mat_size = 128;
     size_t mat_capacity = mat_size * mat_size;
     int min_mat_value = 1;
     int max_mat_value = 100;
@@ -59,6 +64,8 @@ int main()
     pool.resize(2 * mat_size);
     for (auto &x : pool)
         x.resize(mat_size);
+
+
 
 
     std::mt19937 gen(seed); //Standard mersenne_twister_engine seeded with rd()
@@ -114,8 +121,8 @@ int main()
     N_vecs.clear();
     trials_list.clear();
 
-    size_t  prev_recovered_elems = 0;
-    size_t  recovered_elems = 0;
+    int prev_recovered_elems = 0;
+    int  recovered_elems = 0;
     // this is a counter to count how many times a last parent can be changed prior to roll 1 step back
     size_t trials = 0;
     bool all_vairants_tried = false;
@@ -131,6 +138,11 @@ int main()
 
         if (R_vecs.empty())
         {
+
+            if (recovered_elems != U_vecs.size())
+                cout << "R_vecs.empty(): recovered_elems != U_vecs.size()" << endl;
+
+
             // signal that this iteration we are going to check next candidate for a parent
                 bNextTrial = true;
                 // move last from used_vecs to unmantched
@@ -145,8 +157,12 @@ int main()
 
                     // reduce number of recovered elems
                     if (0 == recovered_elems)
-                        throw("0 == recovered_elems!");
-                    --recovered_elems;
+                    {
+                        cout << "0 == recovered_elems wnen !all_vairants_tried" << endl;
+//                        throw std::runtime_error("0 == recovered_elems!");
+                    }
+                    else
+                        --recovered_elems;
                     auto it = trials_list.end();
                     *(--it) +=1;
                 }
@@ -158,17 +174,20 @@ int main()
 //                    *(--it) += 1;
 
                     if (0 == recovered_elems)
-                        throw("0 == recovered_elems!");
-                    --recovered_elems;
+                    {
+                        cout << "0 == recovered_elems wnen all_vairants_tried" << endl;
+//                        throw std::runtime_error("0 == recovered_elems!");
+                    }
+                    else
+                        --recovered_elems;
                     N_vecs.splice(N_vecs.end(), U_vecs, badprev);
-
                 }
         }
         else
         {
             ushort idx2test = R_vecs.front();
-            size_t elem_to_match = recovered_elems >> 1;
-            size_t num_to_match = (recovered_elems + 1) >> 1;
+            int elem_to_match = recovered_elems >> 1;
+            int num_to_match = (recovered_elems + 1) >> 1;
             bool match(true);
 
             if (!U_vecs.empty())
@@ -202,6 +221,10 @@ int main()
                         trials_list.push_back(0);
                     else
                         bNextTrial = false;
+
+                    if (recovered_elems != U_vecs.size())
+                        cout << "recovered_elems != U_vecs.size()" << endl;
+
                 }
             }
             else
