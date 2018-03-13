@@ -11,7 +11,7 @@ using std::shuffle;
 using std::advance;
 using std::unique_ptr;
 using mat_type = short;
-
+using std::endl;
 using std::cout;
 unique_ptr<mat_type[]> AllocateMatrix(size_t size)
 {
@@ -43,8 +43,8 @@ int main()
     std::list<ushort> trials_list; 
     vector<vector<mat_type>> pool;
     std::random_device rd;
-    unsigned int seed = rd();//42;
-    cout << "SEED: " << seed;
+    unsigned int seed = 1852752597;//rd();//42;
+    cout << "SEED: " << seed << endl;
     size_t mat_size = 100;
     size_t mat_capacity = mat_size * mat_size;
     int min_mat_value = 1;
@@ -144,8 +144,8 @@ int main()
                     R_vecs.splice(R_vecs.end(), U_vecs, badprev);
 
                     // reduce number of recovered elems
-                    if(0 == recovered_elems)
-                        throw("0 == recovered_elems!")
+                    if (0 == recovered_elems)
+                        throw("0 == recovered_elems!");
                     --recovered_elems;
                     auto it = trials_list.end();
                     *(--it) +=1;
@@ -158,7 +158,7 @@ int main()
 //                    *(--it) += 1;
 
                     if (0 == recovered_elems)
-                        throw("0 == recovered_elems!")
+                        throw("0 == recovered_elems!");
                     --recovered_elems;
                     N_vecs.splice(N_vecs.end(), U_vecs, badprev);
 
@@ -175,11 +175,12 @@ int main()
             {
                 auto it = U_vecs.end();
                 ushort idx;
+                auto& tst_vec = pool[idx2test];
                 for (int i = num_to_match - 1; i >=0 ; --i)
                 {
                     --it;
                     idx = *it;
-                    if (pool[idx2test][i] != pool[idx][elem_to_match])
+                    if (tst_vec[i] != pool[idx][elem_to_match])
                     {
                         match = false;
                         break;
